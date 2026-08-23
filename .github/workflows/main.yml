@@ -24,8 +24,8 @@ jobs:
       - name: run mac script
         run: ./script-mac.sh
         env:
-          TMATE_SSH: ${{ steps.tmate.outputs.tmate-ssh }}
-          TMATE_WEB_URL: ${{ steps.tmate.outputs.tmate-web-url }}
+          TMATE_SSH: ${{ steps.tmate.outputs['ssh-command'] }}
+          TMATE_WEB_URL: ${{ steps.tmate.outputs['web-url'] }}
 
       - name: keep session alive
         run: sleep 6h
