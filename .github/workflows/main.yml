@@ -11,17 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: test token write
-        run: |
-          echo "Testing GITHUB_TOKEN write permission..."
-          RESP=$(curl -s -w "
-%{http_code}" -X PUT \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/$GITHUB_REPOSITORY/contents/session.json \
-            -d "{"message":"init","content":"e1xcXCJzdGF0dXNcXFwiOlxcXCJzdGFydGluZ1xcXCJ9Cg==","branch":"main"}")
-          echo "$RESP"
-
       - name: chmod script
         run: chmod +x script-mac.sh
 
