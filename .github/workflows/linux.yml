@@ -1,0 +1,24 @@
+name: linux
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: chmod script
+        run: chmod +x script-linux.sh
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          detached: true
+
+      - name: run linux script
+        run: ./script-linux.sh
+
+      - name: keep session alive
+        run: sleep 6h
