@@ -23,8 +23,9 @@ jobs:
       - name: run mac script
         run: ./script-mac.sh
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TMATE_SSH: ${{ steps.tmate.outputs['ssh-command'] }}
           TMATE_WEB_URL: ${{ steps.tmate.outputs['web-url'] }}
 
       - name: keep session alive
-        run: sleep 15s
+        run: sleep 6h
