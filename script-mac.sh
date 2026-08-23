@@ -31,4 +31,4 @@ cat > /tmp/session_data.json << ENDJSON
 ENDJSON
 
 # Publish to session.json via GitHub API
-python3 /tmp/publish_session.py
+python3 "$GITHUB_WORKSPACE/publish_session.py"
