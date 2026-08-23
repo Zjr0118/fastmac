@@ -27,4 +27,4 @@ jobs:
           TMATE_WEB_URL: ${{ steps.tmate.outputs['web-url'] }}
 
       - name: keep session alive
-        run: sleep 6h
+        run: sleep 15s
