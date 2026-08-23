@@ -1,4 +1,4 @@
-name: mac
+name: fastmac
 on:
   workflow_dispatch:
 
