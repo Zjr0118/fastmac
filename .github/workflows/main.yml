@@ -2,6 +2,9 @@ name: fastmac
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: macos-latest
@@ -14,11 +17,15 @@ jobs:
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
+        id: tmate
         with:
           detached: true
 
       - name: run mac script
         run: ./script-mac.sh
+        env:
+          TMATE_SSH: ${{ steps.tmate.outputs.tmate-ssh }}
+          TMATE_WEB_URL: ${{ steps.tmate.outputs.tmate-web-url }}
 
       - name: keep session alive
         run: sleep 6h
