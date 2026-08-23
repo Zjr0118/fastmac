@@ -1,16 +1,24 @@
-name: fastmac
+name: mac
 on:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: macos-latest
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
 
-      # 给脚本加上执行权限
       - name: chmod script
         run: chmod +x script-mac.sh
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          detached: true
+
       - name: run mac script
         run: ./script-mac.sh
+
+      - name: keep session alive
+        run: sleep 6h
