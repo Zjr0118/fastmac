@@ -1,31 +1,50 @@
-name: fastmac
+name: Build macOS Sonoma 14.8.4 ISO
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest
-    timeout-minutes: 360
+    runs-on: macos-13
+    timeout-minutes: 120
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: chmod script
-        run: chmod +x script-mac.sh
+      - name: Download mist-cli
+        run: |
+          curl -L https://github.com/ninxsoft/mist-cli/releases/download/v3.1.0/mist-macos-x86_64 -o mist
+          chmod +x ./mist
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        id: tmate
-        with:
-          detached: true
+      - name: Download macOS Sonoma 14.8.4 (build 23J319)
+        run: |
+          ./mist download --version "14.8.4" --build "23J319" installer --output ./InstallAssistant.pkg
 
-      - name: run mac script
-        run: ./script-mac.sh
+      - name: Expand installer package
+        run: |
+          pkgutil --expand InstallAssistant.pkg ./expanded
+          cp -r ./expanded/Payload/*.app ./
+
+      - name: Create 18GB DMG
+        run: |
+          hdiutil create -o install.dmg -size 18G -layout GPTSPUD -fs HFS+J
+          hdiutil attach install.dmg
+
+      - name: Create bootable install media
+        run: |
+          sudo ./Install\ macOS\ Sonoma.app/Contents/Resources/createinstallmedia --volume /Volumes/Untitled --nointeraction
+
+      - name: Create hybrid ISO
+        run: |
+          hdiutil makehybrid -o macos_sonoma_1484.iso /Volumes/Install\ macOS\ Sonoma -hfs -joliet -iso
+          hdiutil detach /Volumes/Install\ macOS\ Sonoma
+
+      - name: Create Release and Upload ISO
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TMATE_SSH: ${{ steps.tmate.outputs['ssh-command'] }}
-          TMATE_WEB_URL: ${{ steps.tmate.outputs['web-url'] }}
-
-      - name: keep session alive
-        run: sleep 6h
+        run: |
+          gh release create sonoma-1484 \
+            --title "Sonoma-14.8.4-ISO" \
+            --prerelease \
+            --notes "macOS Sonoma 14.8.4 (build 23J319) bootable ISO for VirtualBox/VMware (Intel x86_64)" \
+            macos_sonoma_1484.iso
